@@ -7,9 +7,16 @@ class ImpedanciaAbsorbente():
 
     el metodo ImpedanciaAbsorbente.grafico() requiere pyqtgraph para generar una pantalla con los datos del material dado que se usa como
     complemento de otras apps.
-    '''
-    def __init__(self, porosidad = 0.9, resAire = 32000, d = 0.1, freq = 1000):
 
+    Si freqUnica se setea como False, el objeto genera una lista de frecuencis como un logspace de
+
+    1 a 10kHz en 100 Puntos. Así se pueden  hacer gráficos
+    '''
+    def __init__(self, porosidad = 0.9, resAire = 32000, d = 0.1, freqUnica = True, freq = 1000, bins =100):
+
+        if not freqUnica:
+            freq = np.logspace(0,4,bins)
+            self.freq = freq
         rho0 = 1.18 # Densidad del Aire [kg/m3]
         c0 = 343 # Velocidad del Sonido [m/s]
 
@@ -25,7 +32,8 @@ class ImpedanciaAbsorbente():
 
         self.alpha = 1 - abs(self.R)**2
 
-        self.text = '\n Material Absorbente - Modelo de Delany-Bazley \n \n \
+        if freqUnica:
+            self.text = '\n Material Absorbente - Modelo de Delany-Bazley \n \n \
             Parámetros (input): \n \n \
                 Porosidad (\u03A6): {porosidad} \n \
                 Resistividad al Paso del Aire: {resAire} [Pa*s/m2] \n \
