@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jul 27 19:07:46 2019
 
 @author: marouxet
 """
@@ -9,13 +8,14 @@ from pyqtgraph.Qt import QtGui, QtCore
 import numpy as np
 import pyqtgraph as pg
 import sys
-import pyaudio
-from fractions import Fraction as frac
+from impedanciaAbsorbente import ImpedanciaAbsorbente
+
+
 
 class Plot2D(object):
     
     def __init__(self):
-
+        
 
         ## Imagen de fondo
         self.img = QtGui.QImage('003Zabs.png')
@@ -30,11 +30,20 @@ class Plot2D(object):
         self.fondo2 = pg.ImageItem(image = self.imgArray)
         self.fondo3 = pg.ImageItem(image = self.imgArray)
 
+        # Parámetros de la señal
 
+        '''
+        Creación de un modelo de material absorbente
+        Obtención de la impedancia y del R equivalente
+
+        '''
+        self.matAbs = ImpedanciaAbsorbente(freq = 2000)
+
+        self.R = abs(self.matAbs.R)
+        self.R_phase = np.angle(self.matAbs.R)
+        
         self.A = 1
-        self.R = 0.75
-        self.R_phase = np.pi/2
-        self.f = 1     
+        self.f = 1    ## Esta frecuencia es ficticia, únicamente para graficar. No influye en los resultados
         self.traces1 = dict()
         self.traces2 = dict()
         self.traces3 = dict() 
@@ -44,8 +53,7 @@ class Plot2D(object):
         self.win = pg.GraphicsWindow(title = "Ondas Estacionarias - Impedancia de Material Absorbente")
         
         self.win.setBackground('w')
-        
-  
+
         self.ejePresion = pg.AxisItem('left', showValues = False, text='Presion Acústica') 
         self.ejePresion2 = pg.AxisItem('left', showValues = False, text='Presion Acústica')
         self.ejePresion3 = pg.AxisItem('left', showValues = False, text='Presion Acústica')
@@ -68,8 +76,7 @@ class Plot2D(object):
         self.canvas.setXRange(-3.1, 1.5, padding=0)  
        
         self.canvas.getAxis('left').setLabel('Presión ')
-        
-        
+                
         self.win.nextRow()
         self.canvas2 = self.win.addPlot(axisItems = {'left': self.ejePresion2 , 'bottom':self.ejeLambda2})
         self.canvas2.showGrid(x = True, y = False, alpha = 0.7)      
@@ -80,7 +87,7 @@ class Plot2D(object):
         self.canvas2.setXRange(-3.1, 1.5, padding=0)  
         self.canvas2.addLegend()
         self.canvas2.getAxis('left').setLabel('Presión al cuadrado')
-        
+
         self.win.nextRow()
         self.canvas3 = self.win.addPlot(axisItems = {'left': self.ejePresion3 , 'bottom':self.ejeLambda3})
         self.canvas3.showGrid(x = True, y = False, alpha = 0.7)    
@@ -91,10 +98,14 @@ class Plot2D(object):
         self.canvas3.setXRange(-3.1, 1.5, padding=0)  
         self.canvas3.getAxis('bottom').setLabel('Distancia a la discontinuidad')
         self.canvas3.getAxis('left').setLabel('Velocidad')
+
+        
+        
+
     def start(self):
         if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
             QtGui.QApplication.instance().exec_()
-#' if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+
             
     def trace(self,name,dataset_x,dataset_y):
         if name in self.traces1:
@@ -157,9 +168,12 @@ class Plot2D(object):
         timer.start(75)
         self.start()
         
-# Ejecuto el programa en Sí - Omití la parte condicional
-        # if __name__ == '__main__':
+# Ejecuto el programa en Sí 
+
 p = Plot2D()
+p.matAbs.grafico()
 p.animation()
+
+
             
         

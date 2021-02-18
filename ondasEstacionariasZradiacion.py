@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jul 27 19:07:46 2019
-
 @author: marouxet
 """
 
@@ -9,15 +7,13 @@ from pyqtgraph.Qt import QtGui, QtCore
 import numpy as np
 import pyqtgraph as pg
 import sys
-import pyaudio
-from fractions import Fraction as frac
 
 class Plot2D(object):
     
     def __init__(self):
 
 
-        ## Imagen de fondo
+        # Imagen de fondo
         self.img = QtGui.QImage('004Zrad.png')
         try:
             # Convertir la imagen en el formato requerido por Qt
@@ -30,7 +26,7 @@ class Plot2D(object):
         self.fondo2 = pg.ImageItem(image = self.imgArray)
         self.fondo3 = pg.ImageItem(image = self.imgArray)
 
-
+        # Parámetros de la señal
         self.A = 1
         self.R = 0.6
         self.R_phase = np.pi
